@@ -96,7 +96,7 @@ function getSourceMapPlugin(testPattern, prefix) {
 
 function getPluginsConfig(env) {
   const languageExpression = new RegExp('^./(' + getAllPossibleLanguages().join('|') + ')$');
-  const momentExpression = /moment[/\\]locale$/;
+  const momentExpression = /moment[/\\]src[/\\]locale$/;
   const reactIntlExpression = /react-intl[/\\]locale-data$/;
   const intlExpression = /intl[/\\]locale-data[/\\]jsonp$/;
   const themeExpression = /sass[/\\]themes$/;
@@ -125,8 +125,6 @@ function getPluginsConfig(env) {
     new webpack.ContextReplacementPlugin(intlExpression, languageExpression),
     new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('production') } }),
     new webpack.PrefetchPlugin('react'),
-    new webpack.PrefetchPlugin('react-router'),
-    new webpack.PrefetchPlugin('fluxible'),
     new webpack.PrefetchPlugin('leaflet'),
     new webpack.HashedModuleIdsPlugin(),
     new webpack.LoaderOptionsPlugin({
@@ -181,16 +179,11 @@ function getDevelopmentEntry() {
 function getEntry() {
   const entry = {
     main: './app/client',
-    common: [ // These come from all imports in client.js
+    common: [
       'react',
       'react-dom',
       'react-relay',
-      'react-router-relay',
-      'react-intl',
-      'fluxible-addons-react/FluxibleComponent',
-      'lodash/isEqual',
       'react-tap-event-plugin',
-      'fluxible',
     ],
     leaflet: ['leaflet'],
   };
@@ -221,7 +214,10 @@ module.exports = {
   resolve: {
     extensions: ['.js'],
     modules: ['node_modules'],
-    alias: {},
+    alias: {
+      'lodash.merge': 'lodash/merge',
+    },
+    mainFields: ["browser", "module", "jsnext:main", "main"],
   },
   module: {
     rules: getRulesConfig(process.env.NODE_ENV),
@@ -231,9 +227,22 @@ module.exports = {
     tls: 'empty',
   },
   externals: {
-    'es6-promise': 'var Promise',
-    fetch: 'var fetch',
+    'core-js/library/fn/symbol': 'var Symbol',
+    'core-js/library/fn/object/assign': 'var Object.assign',
+    'core-js/library/fn/weak-map': 'var WeakMap',
+    'core-js/library/es6/map': 'var Map',
+    'core-js/library/fn/promise': 'var Promise',
+    'core-js/library/fn/array/from': 'var Array.from',
+    'core-js/library/fn/object/keys': 'var Object.keys',
+    'core-js/library/fn/object/freeze': 'var Object.freeze',
+    'core-js/library/fn/object/get-prototype-of': 'var Object.getPrototypeOf',
+    'core-js/library/fn/object/set-prototype-of': 'var Object.setPrototypeOf',
+    'core-js/library/fn/object/define-property': 'var Object.defineProperty',
+    'core-js/library/fn/json/stringify': 'var JSON.stringify',
+    'core-js/library/fn/object/create': 'var Object.create',
+    'core-js/library/fn/symbol/iterator': 'var Symbol.iterator',
     'fbjs/lib/fetch': 'var fetch',
     './fetch': 'var fetch',
+    'object-assign': 'var Object.assign',
   },
 };

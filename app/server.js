@@ -106,8 +106,7 @@ function getPolyfills(userAgent) {
     features,
     minify: true,
     unknown: 'polyfill',
-    // TODO WeakMap polyfill breaks IE11 on load, bug in polyfill-service
-    excludes: ['WeakMap'],
+    excludes: [],
   });
 }
 
